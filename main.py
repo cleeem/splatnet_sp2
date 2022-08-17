@@ -54,7 +54,7 @@ async def stats(ctx, number):
     await last(ctx, number)
 
 dico_stuff = {
-    "Main Power Up" : "<:mpu:1009070739170799626> ",
+    "Main Power Up" : "<:mpu:1009070739170799626>",
     "Ability Doubler" : "<:ab:1009070271661084733>",
     "Run Speed Up" : "<:rsu:1009070594911907901>",
     "Swim Speed Up" : "<:ssu:1009071046105759865>",
