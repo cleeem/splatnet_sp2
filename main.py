@@ -221,6 +221,16 @@ class Splatnet2:
                 duree = "3:00"
                 score = f"Score : player's team {result.my_team_percentage}% | {result.other_team_percentage}% ennemy team"
 
+        if result.game_mode.name == "League Battle":
+            if result.my_team_count > result.other_team_count:
+                win_state = "won"
+            else:
+                win_state = "lost"
+
+            duree = str(result.elapsed_time/60).replace(".",":")
+            score = f"Score : player's team {result.my_team_count} | {result.other_team_count} ennemy team\nroom power : {result.estimate_x_power} | your X power : {result.x_power} "
+        
+
         game_stats = (f"your team {win_state} on {result.stage.name} ({result.game_mode.name} mode : {result.rule.name})\n{score} \nmatch date {time.ctime(result.start_time)} ({duree[:4]} minutes)" )
 
         return my_team, ennemy_team, game_stats
