@@ -53,6 +53,10 @@ async def last(ctx, number=0):
 async def stats(ctx, number):
     await last(ctx, number)
 
+@bot.command()
+async def token(ctx):
+    pass
+    
 dico_stuff = {
     "Main Power Up" : "<:mpu:1009070739170799626>",
     "Ability Doubler" : "<:ab:1009070271661084733>",
@@ -225,7 +229,7 @@ class Splatnet2:
 import sys
 
 try:
-    sys.path.append("/python/token")
+    sys.path.append("../token")
     import token_bot
 except:
     sys.path.append("/home/cleeem/python/token")
@@ -234,3 +238,4 @@ except:
 token_run = token_bot.tokens["token_bot_splatnet"]
 
 bot.run(token_run)
+
