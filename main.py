@@ -39,16 +39,45 @@ async def on_ready():
 
 
 @bot.command()
+async def splatnet(ctx):
+    for i in range(len(test.data_stuff)):
+        data : test.Stuff = test.get_stuff(data=test.data_stuff ,indice=i)
+        dico = {'fields': [
+            {'inline': True, 'name': "New Price", 'value': f"{data.new_price} <:sp_coin:1010654259425062952>"}, 
+            {'inline': True, 'name': "New Ability", 'value': data.new_main_emote},
+            {'inline': True, 'name': "Brand", 'value': data.brand},
+
+            {'inline': True, 'name': "Old Price", 'value': f"{data.old_price} <:sp_coin:1010654259425062952>"}, 
+            {'inline': True, 'name': "old Ability", 'value': data.old_main_emote},
+            {'inline': True, 'name': "Frequent Bonus", 'value': f"{data.frequent_bonus} {data.frequent_bonus_emote}"},
+            
+            ], 'color': 3394303, 'type': 'rich', 'description': f"Available until {data.end_time}", "title" : data.name_stuff}
+        embed_stuff = Embed.from_dict(dico)
+        embed_stuff.set_thumbnail(url=data.gear_url)
+        await ctx.send(embed=embed_stuff)
+
+
+@bot.command()
 async def salmon(ctx):
     data = test.get_salmon()
-    await ctx.send(str(data))
+    dico = {'fields': [
+            {'inline': True, 'name': 'Maps :', 'value': data.current_map }, 
+            {'inline': True, 'name': 'Weapons :', 'value': data.current_weapon_list},
+            {'inline': True, 'name': "Date", 'value': f"{data.current_start_time[11:16]} to {data.current_end_time[11:16]}"},
+            {'inline': False, 'name': "--------------------", 'value': f"Next Rotation \n**--------------------**"},
+            {'inline': True, 'name': 'Next Map :', 'value': data.next_map }, 
+            {'inline': True, 'name': 'Next Weapons :', 'value': data.next_weapon_list},
+            {'inline': True, 'name': "Date", 'value': f"{data.next_start_time[11:16]} to {data.next_end_time[11:16]}"},
+            ], 'color': 3394303, 'type': 'rich', 'description': "", "title" : "Salmon Run"}
+    embed_salmon = Embed.from_dict(dico)
 
+    await ctx.send(embed=embed_salmon)
 
 @bot.command()
 async def rotation(ctx):
     dico_ordre = {}
     for key in test.list_mode:
-        data = test.get_data(test.all_data[key])
+        data = test.get_data(test.data_maps[key])
         dico = {'fields': [
             {'inline': True, 'name': 'Maps :', 'value': data.current_maps }, 
             {'inline': True, 'name': 'Next Maps :', 'value': data.next_maps }, 
@@ -93,14 +122,17 @@ async def last(ctx, number=0):
     await ctx.send(embed=embed_ennemy)
     await ctx.send(embed=embed_game)
 
+
 @bot.command()
 async def stats(ctx, number):
     await last(ctx, number)
+
 
 @bot.command()
 async def token(ctx):
     pass
     
+
 dico_stuff = {
     "Main Power Up" : "<:mpu:1009070739170799626>",
     "Ability Doubler" : "<:ab:1009070271661084733>",

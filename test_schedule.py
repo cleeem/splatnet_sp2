@@ -3,32 +3,9 @@ import time
 import requests
 
 
-class Rotation:
-    def __init__(self, data) -> None:
-        self.type = data[0]["game_mode"]["name"]
-
-        current_stage_a = data[0]["stage_a"]["name"]
-        current_stage_b = data[0]["stage_b"]["name"]
-        self.current_maps = f"{current_stage_a} \n{current_stage_b}"
-        self.current_mode = data[0]["rule"]["name"] + " " + dico_emote[data[0]["rule"]["name"]]
-        self.current_start_time = time.ctime(int(data[0]["start_time"]))
-        self.current_end_time = time.ctime(int(data[0]["end_time"]))
-
-        next_stage_a = data[1]["stage_a"]["name"]
-        next_stage_b = data[1]["stage_b"]["name"]
-        self.next_maps = f"{next_stage_a} \n{next_stage_b}"
-        self.next_mode = data[1]["rule"]["name"] + " " + dico_emote[data[1]["rule"]["name"]]
-        self.next_start_time = time.ctime(int(data[1]["start_time"]))
-        self.next_end_time = time.ctime(int(data[1]["end_time"]))
-
-
-    def __str__(self) -> str:
-        return f"Current Rotation : \nMaps : {self.current_maps} \nMode : {self.current_mode}\n{self.current_start_time} to {self.current_end_time} \n\nNext Rotation : \nMaps : {self.next_maps} \nMode : {self.next_mode}\n{self.next_start_time} {self.next_end_time}"
-
-
-def get_data(data:list):
-    rotation_data = Rotation(data=data)
-    return rotation_data
+##################################
+# Toutes les données nécessaires #
+##################################
 
 
 dico_emote = {
@@ -38,7 +15,6 @@ dico_emote = {
     "Splat Zones" : "<:sz:853656465423990807>",
     "Turf War" : "<:turf:1010462680663994418>"
 }
-
 
 dico_armes = {
     "Sploosh-o-matic" : "<:sploosh:1010480744860221440>",
@@ -94,19 +70,58 @@ dico_armes = {
 
 }
 
+dico_stuff = {
+    "Main Power Up" : "<:mpu:1009070739170799626>",
+    "Ability Doubler" : "<:ab:1009070271661084733>",
+    "Run Speed Up" : "<:rsu:1009070594911907901>",
+    "Swim Speed Up" : "<:ssu:1009071046105759865>",
+    "Ink Saver (Main)" : "<:ism:1009070712822181901>",
+    "Ink Saver (Sub)" : "<:iss:1009071116842717275>",
+    "Special Saver" : "<:ss:1009070872616763463>",
+    "Special Charge Up" : "<:scu:1009070989474271322>",
+    "Quick Respawn" : "<:qr:1009070895383466046>",
+    "Quick Super Jump" : "<:qsj:1009070688256151624>",
+    "Comeback" : "<:cbk:1009070396429062195>",
+    "Ink Resistance Up" : "<:ir:1009070848931532881>",
+    "Bomb Defense Up DX" : "<:bdu:1009070315814518816>",
+    "Respawn Punisher" : "<:rsp:1009070563580452914>",
+    "question mark" : "<:uk:1009071227043852310>",
+    "uk" : "<:uk:1009071227043852310>",
+    "Stealth Jump" : "<:sj:1009071141664604200>",
+    "Special Power Up" : "<:spu:1009071008021483530>",
+    "Ink Recovery Up" : "<:iru:1009070659843919913>",
+    "Object Shredder" : "<:os:1009070825023995996>",
+    "Last-Ditch Effort" : "<:lde:1009070541711343756>",
+    "Ninja Squid" : "<:ns:1009071068360753242>",
+    "Drop Roller" : "<:dr:1009070967785525299>",
+    "Thermal Ink" : "<:ti:1009071170018095126>",
+    "Tenacity" : "<:tnty:1009070763745234944>",
+    "Opening Gambit" : "<:og:1009071094352838727>",
+    "Haunt" : "<:hnt:1009070429064941628>",
+    "Sub Power Up" : "<:sbpu:1009070353810735196>",
+}
+
 
 list_mode = ["regular", "gachi", "league"]
 
+url_assets = "https://splatoon2.ink/assets/splatnet/"
 url = "https://splatoon2.ink/data/schedules.json"
 url_salmon = "https://splatoon2.ink/data/coop-schedules.json"
+url_stuff = "https://splatoon2.ink/data/merchandises.json"
 
-response = requests.get(url=url)
+response_maps = requests.get(url=url)
 response_salmon = requests.get(url=url_salmon)
+response_stuff = requests.get(url=url_stuff)
 
-all_data = json.loads(response.text)
+data_maps = json.loads(response_maps.text)
 data_salmon = json.loads(response_salmon.text)
+data_stuff = json.loads(response_stuff.text)
+data_stuff = data_stuff["merchandises"]
 
 
+#############################################################################
+# Creation des différentes classes pour accéder aux données plus facilement #
+#############################################################################
 
 class Salmon:
     def __init__(self, data) -> None:
@@ -123,10 +138,10 @@ class Salmon:
             for elt in data["details"][0]["weapons"]:
                 current_weapon_list.append(elt["weapon"]["name"])
 
-        self.current_weapon_list = f"{dico_armes[current_weapon_list[0]]}  |  {dico_armes[current_weapon_list[1]]} \n{dico_armes[current_weapon_list[2]]}  |  {dico_armes[current_weapon_list[3]]} "
+        self.current_weapon_list = f"{dico_armes[current_weapon_list[0]]}  |  {dico_armes[current_weapon_list[1]]}  |  {dico_armes[current_weapon_list[2]]}  |  {dico_armes[current_weapon_list[3]]} "
 
 
-        self.next_map = data["details"][0]["stage"]["name"]
+        self.next_map = data["details"][1]["stage"]["name"]
         self.next_start_time = time.ctime(int(data["schedules"][0]["start_time"]))
         self.next_end_time = time.ctime(int(data["schedules"][0]["end_time"]))
 
@@ -139,13 +154,73 @@ class Salmon:
             for elt in data["details"][1]["weapons"]:
                 next_weapon_list.append(elt["weapon"]["name"])
         
-        self.next_weapon_list = f"{dico_armes[next_weapon_list[0]]}  |  {dico_armes[next_weapon_list[1]]} \n{dico_armes[next_weapon_list[2]]}  |  {dico_armes[next_weapon_list[3]]} "
+        self.next_weapon_list = f"{dico_armes[next_weapon_list[0]]}  |  {dico_armes[next_weapon_list[1]]}  |  {dico_armes[next_weapon_list[2]]}  |  {dico_armes[next_weapon_list[3]]} "
     
 
     def __str__(self) -> str:
         return f"Current Rotation : \nMaps : {self.current_map} \n{self.current_weapon_list} \n{self.current_start_time} to {self.current_end_time} \n\nNext Rotation : \nMaps : {self.next_map} \n{self.next_weapon_list}\n{self.next_start_time} {self.next_end_time}"
 
 
+class Rotation:
+    def __init__(self, data) -> None:
+        self.type = data[0]["game_mode"]["name"]
+
+        current_stage_a = data[0]["stage_a"]["name"]
+        current_stage_b = data[0]["stage_b"]["name"]
+        self.current_maps = f"{current_stage_a} \n{current_stage_b}"
+        self.current_mode = data[0]["rule"]["name"] + " " + dico_emote[data[0]["rule"]["name"]]
+        self.current_start_time = time.ctime(int(data[0]["start_time"]))
+        self.current_end_time = time.ctime(int(data[0]["end_time"]))
+
+        next_stage_a = data[1]["stage_a"]["name"]
+        next_stage_b = data[1]["stage_b"]["name"]
+        self.next_maps = f"{next_stage_a} \n{next_stage_b}"
+        self.next_mode = data[1]["rule"]["name"] + " " + dico_emote[data[1]["rule"]["name"]]
+        self.next_start_time = time.ctime(int(data[1]["start_time"]))
+        self.next_end_time = time.ctime(int(data[1]["end_time"]))
+
+
+    def __str__(self) -> str:
+        return f"Current Rotation : \nMaps : {self.current_maps} \nMode : {self.current_mode}\n{self.current_start_time} to {self.current_end_time} \n\nNext Rotation : \nMaps : {self.next_maps} \nMode : {self.next_mode}\n{self.next_start_time} {self.next_end_time}"
+
+
+class Stuff:
+    def __init__(self, data=data_stuff, indice=0):
+        self.name_stuff = data[indice]["gear"]["name"]
+        self.brand = data[indice]["gear"]["brand"]["name"]
+        self.new_price = data[indice]["price"]
+        self.old_price = data[indice]["original_gear"]["price"]
+        
+        self.new_main = data[indice]["skill"]["name"]
+        self.new_main_emote = dico_stuff[self.new_main]
+        self.old_main = data[indice]["original_gear"]["skill"]["name"]
+        self.old_main_emote = dico_stuff[self.old_main]
+
+        self.gear_url = url_assets + data[indice]["gear"]["image"]
+        self.end_time = time.ctime(int(data[indice]["end_time"]))
+        self.frequent_bonus = data[indice]["gear"]["brand"]["frequent_skill"]["name"]
+        self.frequent_bonus_emote = dico_stuff[self.frequent_bonus]
+    
+    def __str__(self) -> str:
+        return f"{self.gear_url} {self.brand} jusqu'au {self.end_time} \nold : {self.old_main} {self.old_price} \nnew : {self.new_main} {self.new_price} "
+
+
+
+########################################################
+# Fonctions permettant au bot de récupérer les données #
+########################################################
+
+
 def get_salmon(data=data_salmon):
     salmon_data = Salmon(data=data_salmon)
     return salmon_data
+
+
+def get_data(data:list):
+    rotation_data = Rotation(data=data)
+    return rotation_data
+
+
+def get_stuff(data, indice):
+    stuff_data = Stuff(data=data, indice=indice)
+    return stuff_data
