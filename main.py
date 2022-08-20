@@ -12,6 +12,16 @@ import discord.ui as bt
 from discord.ext import commands
 
 
+def addincsv(url_file,objet,newline =True, delimiter =  None):
+    csv = open(url_file,'a',encoding='utf-8')
+    if newline:
+        csv.write((str(objet)+'\n'))
+    else:
+        csv.write(str(objet))
+        csv.write(str(delimiter))
+    csv.close()
+
+
 client = Client()
 
 intents = Intents.default()
@@ -26,6 +36,12 @@ async def on_ready():
     print("Ready !")
     activity = Game(name="!help", type=1)
     await bot.change_presence(status=Status.online, activity=activity)
+
+
+@bot.command()
+async def salmon(ctx):
+    data = test.get_salmon()
+    await ctx.send(str(data))
 
 
 @bot.command()
