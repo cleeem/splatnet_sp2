@@ -70,7 +70,7 @@ async def salmon(ctx):
             {'inline': True, 'name': "Date", 'value': f"{data.next_start_time[11:16]} to {data.next_end_time[11:16]}"},
             ], 'color': 3394303, 'type': 'rich', 'description': "", "title" : "Salmon Run"}
     embed_salmon = Embed.from_dict(dico)
-
+    
     await ctx.send(embed=embed_salmon)
 
 @bot.command()

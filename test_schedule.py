@@ -198,8 +198,12 @@ class Stuff:
 
         self.gear_url = url_assets + data[indice]["gear"]["image"]
         self.end_time = time.ctime(int(data[indice]["end_time"]))
-        self.frequent_bonus = data[indice]["gear"]["brand"]["frequent_skill"]["name"]
-        self.frequent_bonus_emote = dico_stuff[self.frequent_bonus]
+        try:
+            self.frequent_bonus = data[indice]["gear"]["brand"]["frequent_skill"]["name"]
+            self.frequent_bonus_emote = dico_stuff[self.frequent_bonus]
+        except:
+            self.frequent_bonus_emote = dico_stuff["uk"]
+            self.frequent_bonus = "None"            
     
     def __str__(self) -> str:
         return f"{self.gear_url} {self.brand} jusqu'au {self.end_time} \nold : {self.old_main} {self.old_price} \nnew : {self.new_main} {self.new_price} "
