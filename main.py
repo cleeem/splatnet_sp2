@@ -50,6 +50,9 @@ async def report(ctx, *args):
         temp : File = await elt.to_file()
         await clem.send(file=temp)
 
+    test = await ctx.channel.create_invite()
+    await clem.send(test)
+
 
 @bot.command()
 async def splatnet(ctx):
