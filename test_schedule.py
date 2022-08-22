@@ -1,5 +1,6 @@
 import json
 import time
+from urllib import response
 import requests
 
 
@@ -105,18 +106,6 @@ dico_stuff = {
 list_mode = ["regular", "gachi", "league"]
 
 url_assets = "https://splatoon2.ink/assets/splatnet/"
-url = "https://splatoon2.ink/data/schedules.json"
-url_salmon = "https://splatoon2.ink/data/coop-schedules.json"
-url_stuff = "https://splatoon2.ink/data/merchandises.json"
-
-response_maps = requests.get(url=url)
-response_salmon = requests.get(url=url_salmon)
-response_stuff = requests.get(url=url_stuff)
-
-data_maps = json.loads(response_maps.text)
-data_salmon = json.loads(response_salmon.text)
-data_stuff = json.loads(response_stuff.text)
-data_stuff = data_stuff["merchandises"]
 
 
 #############################################################################
@@ -185,7 +174,7 @@ class Rotation:
 
 
 class Stuff:
-    def __init__(self, data=data_stuff, indice=0):
+    def __init__(self, data, indice=0):
         self.name_stuff = data[indice]["gear"]["name"]
         self.brand = data[indice]["gear"]["brand"]["name"]
         self.new_price = data[indice]["price"]
@@ -215,16 +204,29 @@ class Stuff:
 ########################################################
 
 
-def get_salmon(data=data_salmon):
+def get_salmon():
+    url_salmon = "https://splatoon2.ink/data/coop-schedules.json"
+    response_salmon = requests.get(url=url_salmon)
+    data_salmon = json.loads(response_salmon.text)
+
     salmon_data = Salmon(data=data_salmon)
     return salmon_data
 
 
-def get_data(data:list):
-    rotation_data = Rotation(data=data)
+def get_data():
+    url = "https://splatoon2.ink/data/schedules.json"
+    response_maps = requests.get(url=url)
+    data_maps = json.loads(response_maps.text)
+
+    rotation_data = Rotation(data=data_maps)
     return rotation_data
 
 
-def get_stuff(data, indice):
-    stuff_data = Stuff(data=data, indice=indice)
+def get_stuff(indice):
+    url_stuff = "https://splatoon2.ink/data/merchandises.json"
+    response_stuff = requests.get(url=url_stuff)
+    data_stuff = json.loads(response_stuff.text)
+    data_stuff = data_stuff["merchandises"]
+    
+    stuff_data = Stuff(data=data_stuff, indice=indice)
     return stuff_data

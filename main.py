@@ -34,14 +34,27 @@ bot.remove_command('help')
 @bot.event
 async def on_ready():
     print("Ready !")
-    activity = Game(name="!help", type=1)
+    activity = Game(name=f"!help\nOn {len(bot.guilds)} servers", type=1)
     await bot.change_presence(status=Status.online, activity=activity)
 
 
 @bot.command()
+async def report(ctx, *args):
+
+    clem = bot.get_user(485851523247505409)
+    await clem.send(f"{ctx.author} a éffectué la commande dans '{ctx.channel}' dans le serveur '{ctx.guild}'")
+    await clem.send(str(args).replace("(","").replace('"',"").replace("'", "").replace(",", "").replace(")", ""))
+
+    files = ctx.message.attachments
+    for elt in files:
+        temp : File = await elt.to_file()
+        await clem.send(file=temp)
+
+
+@bot.command()
 async def splatnet(ctx):
-    for i in range(len(test.data_stuff)):
-        data : test.Stuff = test.get_stuff(data=test.data_stuff ,indice=i)
+    for i in range(6):
+        data : test.Stuff = test.get_stuff(indice=i)
         dico = {'fields': [
             {'inline': True, 'name': "New Price", 'value': f"{data.new_price} <:sp_coin:1010654259425062952>"}, 
             {'inline': True, 'name': "New Ability", 'value': data.new_main_emote},
@@ -63,21 +76,21 @@ async def salmon(ctx):
     dico = {'fields': [
             {'inline': True, 'name': 'Maps :', 'value': data.current_map }, 
             {'inline': True, 'name': 'Weapons :', 'value': data.current_weapon_list},
-            {'inline': True, 'name': "Date", 'value': f"{data.current_start_time[11:16]} to {data.current_end_time[11:16]}"},
+            {'inline': True, 'name': "Date", 'value': f"{data.current_start_time} \nto \n{data.current_end_time}"},
             {'inline': False, 'name': "--------------------", 'value': f"Next Rotation \n**--------------------**"},
             {'inline': True, 'name': 'Next Map :', 'value': data.next_map }, 
             {'inline': True, 'name': 'Next Weapons :', 'value': data.next_weapon_list},
-            {'inline': True, 'name': "Date", 'value': f"{data.next_start_time[11:16]} to {data.next_end_time[11:16]}"},
+            {'inline': True, 'name': "Date", 'value': f"{data.next_start_time} \nto \n{data.next_end_time}"},
             ], 'color': 3394303, 'type': 'rich', 'description': "", "title" : "Salmon Run"}
     embed_salmon = Embed.from_dict(dico)
-    
+
     await ctx.send(embed=embed_salmon)
 
 @bot.command()
 async def rotation(ctx):
     dico_ordre = {}
     for key in test.list_mode:
-        data = test.get_data(test.data_maps[key])
+        data = test.get_data()
         dico = {'fields': [
             {'inline': True, 'name': 'Maps :', 'value': data.current_maps }, 
             {'inline': True, 'name': 'Next Maps :', 'value': data.next_maps }, 
@@ -174,7 +187,7 @@ dico_spe = {
     "Burst-Bomb Laucher" : "<:burst:1009101252287811594> ",
     "Curling-Bomb Launcher" : "<:curling:1009101190925144105>",
     "Splat-Bomb Launcher" : "<:splat:1009101120955760740>",
-    "Suction-Bomb Laucher" : "<:suction:1009101054207594556>",
+    "Suction-Bomb Launcher" : "<:suction:1009101054207594556>",
     "Ink Storm" : "<:storm:1009101099489312860>",
     "Baller" : "<:baller:1009101289390604298>",
     "Bubble Blower" : "<:bubble:1009101278124711986>",
