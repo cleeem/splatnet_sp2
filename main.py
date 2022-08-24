@@ -1,4 +1,5 @@
 import json
+from random import randint
 import requests
 
 from splatnet.splatnet2.config import Config
@@ -114,39 +115,6 @@ async def rotation(ctx):
 
         await ctx.send(embed=embed)
 
-
-@bot.command()
-async def last(ctx, number=0):
-    config = Config("../token/config.json")
-    splatnet = Splatnet2(config)
-    results = splatnet.results()
-    ilisible = splatnet.result(results.results[int(number)].battle_number)
-    my_team, ennemy_team, game_stats = splatnet.get_results(ilisible)
-
-    res_my_team = ""
-    for mess in my_team:
-        res_my_team = res_my_team + mess
-    embed_my_team = Embed(title="My Team", description=res_my_team, color=0x33CAFF)
-
-    res_ennemy = ""
-    for mess in ennemy_team:
-        res_ennemy = res_ennemy + mess
-    embed_ennemy = Embed(title="Ennemy Team", description=res_ennemy, color=0x33CAFF)
-
-    embed_game = Embed(title="Game Infos", description=game_stats, color=0x33CAFF)
-    await ctx.send(embed=embed_my_team)
-    await ctx.send(embed=embed_ennemy)
-    await ctx.send(embed=embed_game)
-
-
-@bot.command()
-async def stats(ctx, number):
-    await last(ctx, number)
-
-
-@bot.command()
-async def token(ctx):
-    pass
     
 
 dico_stuff = {
@@ -198,146 +166,155 @@ dico_spe = {
     "Ultra Stamp" : "<:stamp:1009100969948229682>",
 }
 
-class Splatnet2:
-    config: Config
+# class Splatnet2:
+#     config: Config
 
-    def __init__(self, config: Config):
-        self.config = config
-        self.path = "/api/results"
-        self.response = None
+#     def __init__(self, config: Config):
+#         self.config = config
+#         self.path = "/api/results"
+#         self.response = None
 
-    def results(self) -> Results:
-        data = self._call("/api/results")
-        return Results(**data)
+#     def results(self) -> Results:
+#         data = self._call("/api/results")
+#         return Results(**data)
 
-    def result(self, battle_number: str) -> Result:
-        data = self._call(f"/api/results/{battle_number}")
-        return Result(**data)
+#     def result(self, battle_number: str) -> Result:
+#         data = self._call(f"/api/results/{battle_number}")
+#         return Result(**data)
 
-    def _call(self, path: str) -> dict:
-        headers = {
-            "x-unique-id": "32449507786579989234",
-            "x-requested-with": "XMLHttpRequest",
-            "x-timezone-offset": self.config.timezone_offset(),
-            "Accept-Language": self.config.language(),
-            "Cookie": f"iksm_session={self.config.iksm_session()}",
-        }
-        self.response = requests.get(
-            f"https://app.splatoon2.nintendo.net{path}", headers=headers
-        )
+#     def _call(self, path: str) -> dict:
+#         headers = {
+#             "x-unique-id": "32449507786579989234",
+#             "x-requested-with": "XMLHttpRequest",
+#             "x-timezone-offset": self.config.timezone_offset(),
+#             "Accept-Language": self.config.language(),
+#             "Cookie": f"iksm_session={self.config.iksm_session()}",
+#         }
+#         self.response = requests.get(
+#             f"https://app.splatoon2.nintendo.net{path}", headers=headers
+#         )
 
-        return json.loads(self.response.text)
+#         return json.loads(self.response.text)
 
-
-
-    def get_stuff(self, player):
-        stuff = dico_stuff[player.player.head_skills.main.name] + " | "
-        for sub_name in player.player.head_skills.subs:
-            if sub_name == None:
-                stuff = stuff + dico_stuff["uk"]
-            else:
-                stuff = stuff + dico_stuff[sub_name.name]
+#     def get_stuff(self, player):
+#         stuff = dico_stuff[player.player.head_skills.main.name] + " | "
+#         for sub_name in player.player.head_skills.subs:
+#             if sub_name == None:
+#                 stuff = stuff + dico_stuff["uk"]
+#             else:
+#                 stuff = stuff + dico_stuff[sub_name.name]
         
-        stuff = stuff + f"\n{dico_stuff[player.player.clothes_skills.main.name]} | "
-        for sub_name in player.player.clothes_skills.subs:
-            if sub_name == None:
-                stuff = stuff + dico_stuff["uk"]
-            else:
-                stuff = stuff + dico_stuff[sub_name.name]
+#         stuff = stuff + f"\n{dico_stuff[player.player.clothes_skills.main.name]} | "
+#         for sub_name in player.player.clothes_skills.subs:
+#             if sub_name == None:
+#                 stuff = stuff + dico_stuff["uk"]
+#             else:
+#                 stuff = stuff + dico_stuff[sub_name.name]
         
-        stuff = stuff + f"\n{dico_stuff[player.player.shoes_skills.main.name]} | "
-        for sub_name in player.player.shoes_skills.subs:
-            if sub_name == None:
-                stuff = stuff + dico_stuff["uk"]
-            else:
-                stuff = stuff + dico_stuff[sub_name.name]
+#         stuff = stuff + f"\n{dico_stuff[player.player.shoes_skills.main.name]} | "
+#         for sub_name in player.player.shoes_skills.subs:
+#             if sub_name == None:
+#                 stuff = stuff + dico_stuff["uk"]
+#             else:
+#                 stuff = stuff + dico_stuff[sub_name.name]
 
-        return stuff
+#         return stuff
 
+#     def get_results(self, result:Result):
 
-    def get_results(self, result:Result):
+#         my_team = []
+#         ennemy_team = []
 
-        my_team = []
-        ennemy_team = []
+#         player = (result.player_result)
+#         stuff = self.get_stuff(player)
+#         spe = dico_spe[player.player.weapon.special.name]
+#         message_bien = (f"name : {player.player.nickname} , {player.game_paint_point} turf points , rank :{player.player.player_rank}, {player.player.star_rank}* \nweapon used : {player.player.weapon.name} \nkills {player.kill_count} ; assists {player.assist_count} ; deaths {player.death_count} ; specials {spe} {player.special_count}\n{stuff} \n\n")
+#         my_team.append(message_bien)
 
-        player = (result.player_result)
-        stuff = self.get_stuff(player)
-        spe = dico_spe[player.player.weapon.special.name]
-        message_bien = (f"name : {player.player.nickname} , {player.game_paint_point} turf points , rank :{player.player.player_rank}, {player.player.star_rank}* \nweapon used : {player.player.weapon.name} \nkills {player.kill_count} ; assists {player.assist_count} ; deaths {player.death_count} ; specials {spe} {player.special_count}\n{stuff} \n\n")
-        my_team.append(message_bien)
+#         for player in result.my_team_members:
+#             stuff = self.get_stuff(player)
+#             spe = dico_spe[player.player.weapon.special.name]
+#             message_bien = (f"name : {player.player.nickname} , {player.game_paint_point} turf points , rank :{player.player.player_rank}, {player.player.star_rank}* \nweapon used : {player.player.weapon.name} \nkills {player.kill_count} ; assists {player.assist_count} ; deaths {player.death_count} ; specials {spe} {player.special_count}\n{stuff} \n\n")
+#             my_team.append(message_bien)
 
-        for player in result.my_team_members:
-            stuff = self.get_stuff(player)
-            spe = dico_spe[player.player.weapon.special.name]
-            message_bien = (f"name : {player.player.nickname} , {player.game_paint_point} turf points , rank :{player.player.player_rank}, {player.player.star_rank}* \nweapon used : {player.player.weapon.name} \nkills {player.kill_count} ; assists {player.assist_count} ; deaths {player.death_count} ; specials {spe} {player.special_count}\n{stuff} \n\n")
-            my_team.append(message_bien)
-
-        for player in result.other_team_members:
-            stuff = self.get_stuff(player)
-            spe = dico_spe[player.player.weapon.special.name]
-            a = ((f"name : {player.player.nickname} , {player.game_paint_point} turf points , rank :{player.player.player_rank}, {player.player.star_rank}* \nweapon used : {player.player.weapon.name} \nkills {player.kill_count} ; assists {player.assist_count} ; deaths {player.death_count} ; specials {spe} {player.special_count}\n{stuff} \n\n"))
-            ennemy_team.append(a)
+#         for player in result.other_team_members:
+#             stuff = self.get_stuff(player)
+#             spe = dico_spe[player.player.weapon.special.name]
+#             a = ((f"name : {player.player.nickname} , {player.game_paint_point} turf points , rank :{player.player.player_rank}, {player.player.star_rank}* \nweapon used : {player.player.weapon.name} \nkills {player.kill_count} ; assists {player.assist_count} ; deaths {player.death_count} ; specials {spe} {player.special_count}\n{stuff} \n\n"))
+#             ennemy_team.append(a)
             
-        if result.game_mode.name == "Ranked Battle":
-            if result.my_team_count > result.other_team_count:
-                win_state = "won"
-            else:
-                win_state = "lost"
+#         if result.game_mode.name == "Ranked Battle":
+#             if result.my_team_count > result.other_team_count:
+#                 win_state = "won"
+#             else:
+#                 win_state = "lost"
 
-            duree = str(result.elapsed_time/60).replace(".",":")
-            score = f"Score : player's team {result.my_team_count} | {result.other_team_count} ennemy team\nroom power : {result.estimate_x_power} | your X power : {result.x_power} "
+#             duree = str(result.elapsed_time/60).replace(".",":")
+#             score = f"Score : player's team {result.my_team_count} | {result.other_team_count} ennemy team\nroom power : {result.estimate_x_power} | your X power : {result.x_power} "
         
-        elif result.game_mode.name == "Turf War":
-            if result.my_team_percentage > result.other_team_percentage:
-                win_state="won"
-            else:
-                win_state = "lost"
-            duree = "3:00"
-            score = f"Score : player's team {result.my_team_percentage}% | {result.other_team_percentage}% ennemy team"
+#         elif result.game_mode.name == "Turf War":
+#             if result.my_team_percentage > result.other_team_percentage:
+#                 win_state="won"
+#             else:
+#                 win_state = "lost"
+#             duree = "3:00"
+#             score = f"Score : player's team {result.my_team_percentage}% | {result.other_team_percentage}% ennemy team"
         
-        elif result.game_mode.name == "Private Battle":
-            if result.type == "gachi":
-                if result.my_team_count > result.other_team_count:
-                    win_state = "won"
-                else:
-                    win_state = "lost"
+#         elif result.game_mode.name == "Private Battle":
+#             if result.type == "gachi":
+#                 if result.my_team_count > result.other_team_count:
+#                     win_state = "won"
+#                 else:
+#                     win_state = "lost"
 
-                duree = str(result.elapsed_time/60).replace(".",":")
-                score = f"Score : player's team {result.my_team_count} | {result.other_team_count} ennemy team\nroom power : {result.estimate_x_power} | your X power : {result.x_power} "
+#                 duree = str(result.elapsed_time/60).replace(".",":")
+#                 score = f"Score : player's team {result.my_team_count} | {result.other_team_count} ennemy team\nroom power : {result.estimate_x_power} | your X power : {result.x_power} "
             
-            elif result.type == "regular":
-                if result.my_team_percentage > result.other_team_percentage:
-                    win_state="won"
-                else:
-                    win_state = "lost"
-                duree = "3:00"
-                score = f"Score : player's team {result.my_team_percentage}% | {result.other_team_percentage}% ennemy team"
+#             elif result.type == "regular":
+#                 if result.my_team_percentage > result.other_team_percentage:
+#                     win_state="won"
+#                 else:
+#                     win_state = "lost"
+#                 duree = "3:00"
+#                 score = f"Score : player's team {result.my_team_percentage}% | {result.other_team_percentage}% ennemy team"
 
-        if result.game_mode.name == "League Battle":
-            if result.my_team_count > result.other_team_count:
-                win_state = "won"
-            else:
-                win_state = "lost"
+#         if result.game_mode.name == "League Battle":
+#             if result.my_team_count > result.other_team_count:
+#                 win_state = "won"
+#             else:
+#                 win_state = "lost"
 
-            duree = str(result.elapsed_time/60).replace(".",":")
-            score = f"Score : player's team {result.my_team_count} | {result.other_team_count} ennemy team\nroom power : {result.estimate_x_power} | your X power : {result.x_power} "
+#             duree = str(result.elapsed_time/60).replace(".",":")
+#             score = f"Score : player's team {result.my_team_count} | {result.other_team_count} ennemy team\nroom power : {result.estimate_x_power} | your X power : {result.x_power} "
         
 
-        game_stats = (f"your team {win_state} on {result.stage.name} ({result.game_mode.name} mode : {result.rule.name})\n{score} \nmatch date {time.ctime(result.start_time)} ({duree[:4]} minutes)" )
+#         game_stats = (f"your team {win_state} on {result.stage.name} ({result.game_mode.name} mode : {result.rule.name})\n{score} \nmatch date {time.ctime(result.start_time)} ({duree[:4]} minutes)" )
 
-        return my_team, ennemy_team, game_stats
+#         return my_team, ennemy_team, game_stats
 
+#     def test_splat(self):
+#         headers = {
+#             "x-unique-id": "32449507786579989234",
+#             "x-requested-with": "XMLHttpRequest",
+#             "x-timezone-offset": self.config.timezone_offset(),
+#             "Accept-Language": self.config.language(),
+#             "Cookie": f"iksm_session={self.config.iksm_session()}",
+#         }
+#         response = requests.get(
+#             f"https://app.splatoon2.nintendo.net{self.path}", headers=headers
+#         )
 
-import sys
+#         print(response.text)
 
-try:
-    sys.path.append("../token")
-    import token_bot
-except:
-    sys.path.append("/home/cleeem/python/token")
-    import token_bot
+# import sys
+
+# try:
+#     sys.path.append("../token")
+#     import token_bot
+# except:
+#     sys.path.append("/home/cleeem/python/token")
+#     import token_bot
     
-token_run = token_bot.tokens["token_bot_splatnet"]
+# token_run = token_bot.tokens["token_bot_splatnet"]
 
-bot.run(token_run)
-
+# bot.run(token_run)
