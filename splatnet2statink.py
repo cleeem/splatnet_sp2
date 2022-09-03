@@ -1271,7 +1271,7 @@ def get_all():
 		else:
 			n, results = get_num_battles()
 			data = post_battle(0, results, is_s, is_t, m_value, True , debug)
-			print(data)
+			return data
 
 m_value, is_s, is_t, is_r, filename, salmon = main()
 
