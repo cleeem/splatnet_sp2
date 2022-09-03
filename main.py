@@ -92,7 +92,6 @@ async def salmon(ctx):
 
 @bot.command()
 async def rotation(ctx):
-    dico_ordre = {}
     for key in test.list_mode:
         data = test.get_data()
         dico = {'fields': [
@@ -318,3 +317,19 @@ dico_spe = {
 # token_run = token_bot.tokens["token_bot_splatnet"]
 
 # bot.run(token_run)
+
+config=Config()
+
+headers = {
+    "x-unique-id": "32449507786579989234",
+    "x-requested-with": "XMLHttpRequest",
+    "x-timezone-offset": config.timezone_offset(),
+    "Accept-Language": config.language(),
+    "Cookie": f"iksm_session={config.iksm_session()}",
+}
+response = requests.get(
+    f"https://app.splatoon2.nintendo.net/api/results", headers=headers
+)
+
+print(response.text)
+
