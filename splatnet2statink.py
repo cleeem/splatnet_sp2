@@ -26,17 +26,16 @@ from subprocess import call
 
 A_VERSION = "1.8.2"
 
-print("splatnet2statink v{}".format(A_VERSION))
+# print("splatnet2statink v{}".format(A_VERSION))
 
 # place config.txt in same directory as script (bundled or not)
 if getattr(sys, 'frozen', False):
 	app_path = os.path.dirname(sys.executable)
 elif __file__:
-	app_path = os.path.dirname(__file__)
+	app_path = os.path.dirname("../token/config.txt")
 config_path = os.path.join(app_path, "config.txt")
 
 try:
-	
 	config_file = open(config_path, "r")
 	config_data = json.load(config_file)
 	config_file.close()
@@ -179,7 +178,8 @@ def load_json(bool):
 	'''Returns results JSON from online.'''
 
 	if bool:
-		print("Pulling data from online...") # grab data from SplatNet 2
+		# print("Pulling data from online...") # grab data from SplatNet 2
+		pass
 	url = "https://app.splatoon2.nintendo.net/api/results"
 	results_list = requests.get(url, headers=app_head, cookies=dict(iksm_session=YOUR_COOKIE))
 	return json.loads(results_list.text)
@@ -1271,6 +1271,9 @@ def get_all():
 		else:
 			n, results = get_num_battles()
 			data = post_battle(0, results, is_s, is_t, m_value, True , debug)
-			return data
+			print(data)
 
 m_value, is_s, is_t, is_r, filename, salmon = main()
+
+
+# get_all()
