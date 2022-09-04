@@ -824,7 +824,7 @@ def post_battle(i, results, s_flag, t_flag, m_flag, sendgears, debug, ismonitor=
 	elif lobby == "fes_team": # splatfest normal / team
 		payload["lobby"] = "fest_normal" if ver4 else "squad_4"
 		payload["mode"]  = "fest"
-		# ["fes_mode"]["key"] == "fes.result.regular"
+		["fes_mode"]["key"] == "fes.result.regular"
 
 	##########
 	## RULE ##
@@ -1062,40 +1062,40 @@ def post_battle(i, results, s_flag, t_flag, m_flag, sendgears, debug, ismonitor=
 	#####################
 	## SPLATFEST VER.4 ##
 	#####################
-	if ver4 and mode == "fes":
-		# indiv. & team fest_powers in above section
-		payload["my_team_win_streak"]  = results[i]["my_team_consecutive_win"]
-		payload["his_team_win_streak"] = results[i]["other_team_consecutive_win"]
+	# if ver4 and mode == "fes":
+	# 	# indiv. & team fest_powers in above section
+	# 	payload["my_team_win_streak"]  = results[i]["my_team_consecutive_win"]
+	# 	payload["his_team_win_streak"] = results[i]["other_team_consecutive_win"]
 
-		if results[i]["event_type"]["key"] == "10_x_match":
-			payload["special_battle"] = "10x"
-		elif results[i]["event_type"]["key"] == "100_x_match":
-			payload["special_battle"] = "100x"
+	# 	if results[i]["event_type"]["key"] == "10_x_match":
+	# 		payload["special_battle"] = "10x"
+	# 	elif results[i]["event_type"]["key"] == "100_x_match":
+	# 		payload["special_battle"] = "100x"
 
-		total_clout_after = results[i]["contribution_point_total"] # after
-		payload["total_clout_after"] = total_clout_after
+	# 	total_clout_after = results[i]["contribution_point_total"] # after
+	# 	payload["total_clout_after"] = total_clout_after
 
-		if lobby == "fes_team": # normal
-			try:
-				payload["my_team_nickname"] = results[i]["my_team_another_name"]
-			except:
-				pass
-			try:
-				payload["his_team_nickname"] = results[i]["other_team_another_name"]
-			except:
-				pass
+	# 	if lobby == "fes_team": # normal
+	# 		try:
+	# 			payload["my_team_nickname"] = results[i]["my_team_another_name"]
+	# 		except:
+	# 			pass
+	# 		try:
+	# 			payload["his_team_nickname"] = results[i]["other_team_another_name"]
+	# 		except:
+	# 			pass
 
-		# synergy bonus
-		if synergy_mult == 0: # always 0 in pro
-			synergy_mult = 1.0
-		payload["synergy_bonus"] = synergy_mult # max 2.0
+	# 	# synergy bonus
+	# 	if synergy_mult == 0: # always 0 in pro
+	# 		synergy_mult = 1.0
+	# 	payload["synergy_bonus"] = synergy_mult # max 2.0
 
-		# clout
-		clout = results[i]["contribution_point"]
-		# in pro, = his_team_estimate_fest_power
-		# in normal, = turfinked (if victory: +1000) -> = int(round(floor((clout * synergy_bonus) + 0.5)))
-		payload["clout"] = clout
-		payload["total_clout"] = total_clout_after - clout # before
+	# 	# clout
+	# 	clout = results[i]["contribution_point"]
+	# 	# in pro, = his_team_estimate_fest_power
+	# 	# in normal, = turfinked (if victory: +1000) -> = int(round(floor((clout * synergy_bonus) + 0.5)))
+	# 	payload["clout"] = clout
+	# 	payload["total_clout"] = total_clout_after - clout # before
 
 	################
 	## SCOREBOARD ##
@@ -1164,47 +1164,47 @@ def post_battle(i, results, s_flag, t_flag, m_flag, sendgears, debug, ismonitor=
 	##########
 	## GEAR ##
 	########## https://github.com/fetus-hina/stat.ink/blob/master/doc/api-2/post-battle.md#gears-structure
-	headgear_id = results[i]["player_result"]["player"]["head"]["id"]
-	clothing_id = results[i]["player_result"]["player"]["clothes"]["id"]
-	shoes_id    = results[i]["player_result"]["player"]["shoes"]["id"]
-	payload["gears"] = {'headgear': {'secondary_abilities': []}, 'clothing': {'secondary_abilities': []}, 'shoes': {'secondary_abilities': []}}
-	payload["gears"]["headgear"]["gear"] = "#{}".format(headgear_id)
-	payload["gears"]["clothing"]["gear"] = "#{}".format(clothing_id)
-	payload["gears"]["shoes"]["gear"]    = "#{}".format(shoes_id)
+	# headgear_id = results[i]["player_result"]["player"]["head"]["id"]
+	# clothing_id = results[i]["player_result"]["player"]["clothes"]["id"]
+	# shoes_id    = results[i]["player_result"]["player"]["shoes"]["id"]
+	# payload["gears"] = {'headgear': {'secondary_abilities': []}, 'clothing': {'secondary_abilities': []}, 'shoes': {'secondary_abilities': []}}
+	# payload["gears"]["headgear"]["gear"] = "#{}".format(headgear_id)
+	# payload["gears"]["clothing"]["gear"] = "#{}".format(clothing_id)
+	# payload["gears"]["shoes"]["gear"]    = "#{}".format(shoes_id)
 
 	###############
 	## ABILITIES ##
 	############### https://github.com/fetus-hina/stat.ink/blob/master/doc/api-1/constant/ability.md
-	headgear_subs, clothing_subs, shoes_subs = ([-1,-1,-1] for i in range(3))
-	for j in range(3):
-		try:
-			headgear_subs[j] = results[i]["player_result"]["player"]["head_skills"]["subs"][j]["id"]
-		except:
-			headgear_subs[j] = '-1'
-		try:
-			clothing_subs[j] = results[i]["player_result"]["player"]["clothes_skills"]["subs"][j]["id"]
-		except:
-			clothing_subs[j] = '-1'
-		try:
-			shoes_subs[j] = results[i]["player_result"]["player"]["shoes_skills"]["subs"][j]["id"]
-		except:
-			shoes_subs[j] = '-1'
-	headgear_main = results[i]["player_result"]["player"]["head_skills"]["main"]["id"]
-	clothing_main = results[i]["player_result"]["player"]["clothes_skills"]["main"]["id"]
-	shoes_main = results[i]["player_result"]["player"]["shoes_skills"]["main"]["id"]
-	payload["gears"]["headgear"]["primary_ability"] = translate_ability.get(int(headgear_main), "")
-	payload["gears"]["clothing"]["primary_ability"] = translate_ability.get(int(clothing_main), "")
-	payload["gears"]["shoes"]["primary_ability"]    = translate_ability.get(int(shoes_main), "")
-	for j in range(3):
-		payload["gears"]["headgear"]["secondary_abilities"].append(translate_ability.get(int(headgear_subs[j]), ""))
-		payload["gears"]["clothing"]["secondary_abilities"].append(translate_ability.get(int(clothing_subs[j]), ""))
-		payload["gears"]["shoes"]["secondary_abilities"].append(translate_ability.get(int(shoes_subs[j]), ""))
+	# headgear_subs, clothing_subs, shoes_subs = ([-1,-1,-1] for i in range(3))
+	# for j in range(3):
+	# 	try:
+	# 		headgear_subs[j] = results[i]["player_result"]["player"]["head_skills"]["subs"][j]["id"]
+	# 	except:
+	# 		headgear_subs[j] = '-1'
+	# 	try:
+	# 		clothing_subs[j] = results[i]["player_result"]["player"]["clothes_skills"]["subs"][j]["id"]
+	# 	except:
+	# 		clothing_subs[j] = '-1'
+	# 	try:
+	# 		shoes_subs[j] = results[i]["player_result"]["player"]["shoes_skills"]["subs"][j]["id"]
+	# 	except:
+	# 		shoes_subs[j] = '-1'
+	# headgear_main = results[i]["player_result"]["player"]["head_skills"]["main"]["id"]
+	# clothing_main = results[i]["player_result"]["player"]["clothes_skills"]["main"]["id"]
+	# shoes_main = results[i]["player_result"]["player"]["shoes_skills"]["main"]["id"]
+	# payload["gears"]["headgear"]["primary_ability"] = translate_ability.get(int(headgear_main), "")
+	# payload["gears"]["clothing"]["primary_ability"] = translate_ability.get(int(clothing_main), "")
+	# payload["gears"]["shoes"]["primary_ability"]    = translate_ability.get(int(shoes_main), "")
+	# for j in range(3):
+	# 	payload["gears"]["headgear"]["secondary_abilities"].append(translate_ability.get(int(headgear_subs[j]), ""))
+	# 	payload["gears"]["clothing"]["secondary_abilities"].append(translate_ability.get(int(clothing_subs[j]), ""))
+	# 	payload["gears"]["shoes"]["secondary_abilities"].append(translate_ability.get(int(shoes_subs[j]), ""))
 
 	#############
 	## DRY RUN ##
 	#############
-	if t_flag: # -t provided
-		payload["test"] = "dry_run" # works the same as 'validate' for now
+	# if t_flag: # -t provided
+	# 	payload["test"] = "dry_run" # works the same as 'validate' for now
 
 	#**************
 	#*** OUTPUT ***
@@ -1220,14 +1220,15 @@ def post_battle(i, results, s_flag, t_flag, m_flag, sendgears, debug, ismonitor=
 		else:
 			print("Battle #{}: skipping upload based on ignore_private key.".format(i+1))
 	else:
+		pass
 		# POST to stat.ink
 		# https://github.com/fetus-hina/stat.ink/blob/master/doc/api-2/request-body.md
-		url  = 'https://stat.ink/api/v2/battle'
-		auth = {'Authorization': 'Bearer {}'.format(API_KEY), 'Content-Type': 'application/x-msgpack'}
+		# url  = 'https://stat.ink/api/v2/battle'
+		# auth = {'Authorization': 'Bearer {}'.format(API_KEY), 'Content-Type': 'application/x-msgpack'}
 
-		if payload["agent"] != os.path.basename(__file__)[:-3]:
-			print("Could not upload. Please contact @frozenpandaman on Twitter/GitHub for assistance.")
-			sys.exit(1)
+		# if payload["agent"] != os.path.basename(__file__)[:-3]:
+		# 	print("Could not upload. Please contact @frozenpandaman on Twitter/GitHub for assistance.")
+		# 	sys.exit(1)
 		# postbattle = requests.post(url, headers=auth, data=msgpack.packb(payload), allow_redirects=False)
 	return payload
 

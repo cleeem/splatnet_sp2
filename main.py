@@ -186,12 +186,12 @@ class Game:
     def get_image_game(self):
         data = self.get_data()
         img_temp = data["image_result"]
-        scoreboard = Image.open(BytesIO(img_temp)).convert("RGB")
-        scoreboard.show()
+        result = Image.open(BytesIO(img_temp)).convert("RGB")
+        return result
 
-# partie = Game()
-# img_home = partie.get_image_home()
-# img_result = partie.get_image_game()
+partie = Game()
+img_home = partie.get_image_home()
+img_result = partie.get_image_game()
 
 # import sys
 
