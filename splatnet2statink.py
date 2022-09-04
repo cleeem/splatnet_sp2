@@ -1258,7 +1258,7 @@ def blackout(image_result_content, players):
 		pass
 	return scoreboard
 
-def get_all():
+def get_all(indice=0):
 	if salmon: # salmon run mode
 		salmonrun.upload_salmon_run(A_VERSION, YOUR_COOKIE, API_KEY, app_head, is_r)
 	else: # normal mode
@@ -1270,7 +1270,7 @@ def get_all():
 			populate_battles(is_s, is_t, is_r, debug)
 		else:
 			n, results = get_num_battles()
-			data = post_battle(0, results, is_s, is_t, m_value, True , debug)
+			data = post_battle(indice, results, is_s, is_t, m_value, True , debug)
 			return data
 
 m_value, is_s, is_t, is_r, filename, salmon = main()

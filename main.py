@@ -1,7 +1,10 @@
 import json
 import requests
-
 import time
+from PIL import Image, ImageDraw
+from io import BytesIO
+
+
 import test_schedule as test
 import splatnet2statink as sp
 import salmonrun
@@ -164,10 +167,31 @@ dico_spe = {
 }
 
 
-data = sp.get_all()
+class Game:
 
-for k,v in data.items():
-    print(k,v)
+    def __init__(self, indice=0) -> None:
+        self.indice = indice
+
+    def get_data(self):
+        data = sp.get_all(self.indice)
+        return data
+
+    def get_image_home(self):
+        data = self.get_data()
+        img_temp = data["image_gear"]
+        scoreboard = Image.open(BytesIO(img_temp)).convert("RGB")
+        
+        return scoreboard
+
+    def get_image_game(self):
+        data = self.get_data()
+        img_temp = data["image_result"]
+        scoreboard = Image.open(BytesIO(img_temp)).convert("RGB")
+        scoreboard.show()
+
+# partie = Game()
+# img_home = partie.get_image_home()
+# img_result = partie.get_image_game()
 
 # import sys
 
